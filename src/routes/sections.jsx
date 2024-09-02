@@ -10,20 +10,27 @@ export const LoginPage = lazy(() => import('src/pages/login'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
 
-// ----------------------------------------------------------------------
+// Mock authentication function
+const isAuthenticated = () => localStorage.getItem('isAuthenticated') === 'true';
 
 export default function Router() {
   const routes = useRoutes([
     {
-      element: (
+      path: '/',
+      element: isAuthenticated() ? <Navigate to="/dashboard" replace /> : <LoginPage />,
+    },
+    {
+      element: isAuthenticated() ? (
         <DashboardLayout>
           <Suspense>
             <Outlet />
           </Suspense>
         </DashboardLayout>
+      ) : (
+        <Navigate to="/" replace />
       ),
       children: [
-        { element: <IndexPage />, index: true },
+        { path: 'dashboard', element: <IndexPage /> },
         { path: 'user', element: <UserPage /> },
         { path: 'products', element: <ProductsPage /> },
         { path: 'blog', element: <BlogPage /> },

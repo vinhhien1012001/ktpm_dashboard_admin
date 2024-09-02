@@ -6,29 +6,29 @@ import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { fCurrency } from 'src/utils/format-number';
+// import { fCurrency } from 'src/utils/format-number';
 
-import Label from 'src/components/label';
-import { ColorPreview } from 'src/components/color-utils';
+// import Label from 'src/components/label';
+// import { ColorPreview } from 'src/components/color-utils';
 
 // ----------------------------------------------------------------------
 
 export default function ShopProductCard({ product }) {
-  const renderStatus = (
-    <Label
-      variant="filled"
-      color={(product.status === 'sale' && 'error') || 'info'}
-      sx={{
-        zIndex: 9,
-        top: 16,
-        right: 16,
-        position: 'absolute',
-        textTransform: 'uppercase',
-      }}
-    >
-      {product.status}
-    </Label>
-  );
+  // const renderStatus = (
+  //   <Label
+  //     variant="filled"
+  //     color={(product.status === 'sale' && 'error') || 'info'}
+  //     sx={{
+  //       zIndex: 9,
+  //       top: 16,
+  //       right: 16,
+  //       position: 'absolute',
+  //       textTransform: 'uppercase',
+  //     }}
+  //   >
+  //     {product.status}
+  //   </Label>
+  // );
 
   const renderImg = (
     <Box
@@ -47,7 +47,7 @@ export default function ShopProductCard({ product }) {
 
   const renderPrice = (
     <Typography variant="subtitle1">
-      <Typography
+      {/* <Typography
         component="span"
         variant="body1"
         sx={{
@@ -56,27 +56,31 @@ export default function ShopProductCard({ product }) {
         }}
       >
         {product.priceSale && fCurrency(product.priceSale)}
-      </Typography>
+      </Typography> */}
       &nbsp;
-      {fCurrency(product.price)}
+      {product.discountPercentage && `-${product.discountPercentage}%`}
+      {/* {fCurrency(product.price)} */}
     </Typography>
   );
 
   return (
     <Card>
       <Box sx={{ pt: '100%', position: 'relative' }}>
-        {product.status && renderStatus}
+        {/* {product.status && renderStatus} */}
 
         {renderImg}
       </Box>
 
       <Stack spacing={2} sx={{ p: 3 }}>
-        <Link color="inherit" underline="hover" variant="subtitle2" noWrap>
+        {/* <Link color="inherit" underline="hover" variant="subtitle2" noWrap>
           {product.name}
-        </Link>
+        </Link> */}
 
         <Stack direction="row" alignItems="center" justifyContent="space-between">
-          <ColorPreview colors={product.colors} />
+          <Link color="inherit" underline="hover" variant="subtitle2" noWrap>
+            {product.name}
+          </Link>
+          {/* <ColorPreview colors={product.colors} /> */}
           {renderPrice}
         </Stack>
       </Stack>

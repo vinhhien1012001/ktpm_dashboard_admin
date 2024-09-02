@@ -41,6 +41,11 @@ export default function AccountPopover() {
     setOpen(null);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('isAuthenticated'); // Remove authentication status
+    window.location.href = '/login'; // Redirect to login page
+  };
+
   return (
     <>
       <IconButton
@@ -105,7 +110,7 @@ export default function AccountPopover() {
         <MenuItem
           disableRipple
           disableTouchRipple
-          onClick={handleClose}
+          onClick={handleLogout}
           sx={{ typography: 'body2', color: 'error.main', py: 1.5 }}
         >
           Logout
