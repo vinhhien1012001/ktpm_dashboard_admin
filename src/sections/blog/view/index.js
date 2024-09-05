@@ -1,1 +1,1 @@
-export { default as BlogView } from './blog-view';
+export { default as SessionView } from './session-view';

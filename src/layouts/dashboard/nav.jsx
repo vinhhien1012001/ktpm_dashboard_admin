@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { useState, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -21,19 +21,20 @@ import Logo from 'src/components/logo';
 import Scrollbar from 'src/components/scrollbar';
 
 import { NAV } from './config-layout';
-import navConfig from './config-navigation';
+import getNavConfig from './config-navigation';
 
 // ----------------------------------------------------------------------
 
 export default function Nav({ openNav, onCloseNav }) {
   const pathname = usePathname();
-
   const upLg = useResponsive('up', 'lg');
+  const [navConfig, setNavConfig] = useState(getNavConfig());
 
   useEffect(() => {
     if (openNav) {
       onCloseNav();
     }
+    setNavConfig(getNavConfig()); // Update navConfig when pathname changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 

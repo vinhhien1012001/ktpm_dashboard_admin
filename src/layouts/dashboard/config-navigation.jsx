@@ -6,72 +6,41 @@ const icon = (name) => (
   <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />
 );
 
-// Role admin
-// const navConfig = [
-//   {
-//     title: 'dashboard',
-//     path: '/dashboard',
-//     icon: icon('ic_analytics'),
-//   },
-//   {
-//     title: 'user',
-//     path: '/',
-//     icon: icon('ic_user'),
-//   },
-//   {
-//     title: 'My vouchers',
-//     path: '/products',
-//     icon: icon('ic_cart'),
-//   },
-//   // {
-//   //   title: 'blog',
-//   //   path: '/blog',
-//   //   icon: icon('ic_blog'),
-//   // },
-//   // {
-//   //   title: 'login',
-//   //   path: '/login',
-//   //   icon: icon('ic_lock'),
-//   // },
-//   // {
-//   //   title: 'Not found',
-//   //   path: '/404',
-//   //   icon: icon('ic_disabled'),
-//   // },
-// ];
+const getNavConfig = () => {
+  const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true'; // Check if user is authenticated
+  const role = localStorage.getItem('role'); // Get user role
 
-// Role brand
-const navConfig = [
-  // {
-  //   title: 'dashboard',
-  //   path: '/dashboard',
-  //   icon: icon('ic_analytics'),
-  // },
-  // {
-  //   title: 'user',
-  //   path: '/',
-  //   icon: icon('ic_user'),
-  // },
-  {
-    title: 'My vouchers',
-    path: '/',
-    icon: icon('ic_cart'),
-  },
-  // {
-  //   title: 'blog',
-  //   path: '/blog',
-  //   icon: icon('ic_blog'),
-  // },
-  // {
-  //   title: 'login',
-  //   path: '/login',
-  //   icon: icon('ic_lock'),
-  // },
-  // {
-  //   title: 'Not found',
-  //   path: '/404',
-  //   icon: icon('ic_disabled'),
-  // },
-];
+  console.log('isAuthenticated in NAV:', isAuthenticated); // Add this line
+  console.log('role in NAV:', role); // Add this line
 
-export default navConfig;
+  return isAuthenticated
+    ? [
+        {
+          title: 'dashboard',
+          path: '/dashboard',
+          icon: icon('ic_analytics'),
+        },
+        ...(role === 'admin'
+          ? [
+              {
+                title: 'user',
+                path: '/user',
+                icon: icon('ic_user'),
+              },
+            ]
+          : []),
+        {
+          title: 'My vouchers',
+          path: '/products',
+          icon: icon('ic_cart'),
+        },
+        {
+          title: 'Session',
+          path: '/session',
+          icon: icon('ic_analytics'),
+        },
+      ]
+    : [];
+};
+
+export default getNavConfig;

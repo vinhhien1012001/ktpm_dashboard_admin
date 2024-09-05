@@ -43,6 +43,8 @@ export default function AccountPopover() {
 
   const handleLogout = () => {
     localStorage.removeItem('isAuthenticated'); // Remove authentication status
+    localStorage.removeItem('token');
+    localStorage.removeItem('role');
     window.location.href = '/login'; // Redirect to login page
   };
 
