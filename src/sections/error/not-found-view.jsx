@@ -1,7 +1,7 @@
-import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 
 import { RouterLink } from 'src/routes/components';
 

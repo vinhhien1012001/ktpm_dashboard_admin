@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 
-import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
@@ -8,6 +7,7 @@ import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import CardHeader from '@mui/material/CardHeader';
+import Box from '@mui/material/Box';
 
 import { fToNow } from 'src/utils/format-time';
 

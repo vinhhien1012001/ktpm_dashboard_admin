@@ -5,6 +5,7 @@ import DashboardLayout from 'src/layouts/dashboard';
 
 export const IndexPage = lazy(() => import('src/pages/app'));
 export const SessionPage = lazy(() => import('src/pages/session'));
+export const SessionDetailPage = lazy(() => import('src/sections/blog/view/session-detail-view'));
 export const UserPage = lazy(() => import('src/pages/user'));
 export const LoginPage = lazy(() => import('src/pages/login'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
@@ -38,6 +39,7 @@ export default function Router() {
         },
         { path: 'products', element: <ProductsPage /> },
         { path: 'session', element: <SessionPage /> },
+        { path: 'session/:id', element: <SessionDetailPage /> },
       ],
     },
     {

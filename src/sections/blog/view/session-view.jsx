@@ -1,5 +1,9 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
+
+import { toast } from 'react-toastify';
 
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -7,31 +11,34 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import TextField from '@mui/material/TextField';
+// import Chip from '@mui/material/Chip';
 
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
-import Grid from '@mui/material/Unstable_Grid2';
+// import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
-
-import { posts } from 'src/_mock/blog';
 
 import Iconify from 'src/components/iconify';
 
-import PostCard from '../post-card';
-import PostSort from '../post-sort';
-import PostSearch from '../post-search';
+import SessionDetail from '../session-detail';
+
+// import SessionDetail from '../session-detail';
 
 // ----------------------------------------------------------------------
 
 export default function SessionView() {
   const [sessions, setSessions] = useState([]);
-  // const [openDialog, setOpenDialog] = useState(false);
-  // const [newSession, setNewSession] = useState({ name: '', startTime: '' });
-
-  useEffect(() => {
-    fetchSessions();
-  }, []);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [newSession, setNewSession] = useState({ name: '', startTime: '', endTime: '' });
+  const [selectedSession, setSelectedSession] = useState(null);
+  const navigate = useNavigate();
 
   const fetchSessions = async () => {
     try {
@@ -46,6 +53,7 @@ export default function SessionView() {
               rewards
               startTime
               status
+              name
             }
           }
         `,
@@ -67,16 +75,27 @@ export default function SessionView() {
     }
   };
 
+  useEffect(() => {
+    fetchSessions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleAddSession = async () => {
     try {
-      await axios.post(
+      const mutation = `
+        mutation CreateGameSession {
+          createGameSession(
+            name: "${newSession.name}"
+            startTime: "${new Date(newSession.startTime).toISOString()}"
+            endTime: "${new Date(newSession.endTime).toISOString()}"
+          )
+        }
+      `;
+
+      const response = await axios.post(
         'http://localhost:8080/graphql',
         {
-          query: `
-          mutation CreateGameSession {
-            createGameSession
-          }
-        `,
+          query: mutation,
         },
         {
           headers: {
@@ -84,11 +103,52 @@ export default function SessionView() {
           },
         }
       );
-      // setOpenDialog(false);
-      // setNewSession({ name: '', startTime: '' });
-      fetchSessions();
+
+      if (response.data.data.createGameSession) {
+        setOpenDialog(false);
+        setNewSession({ name: '', startTime: '', endTime: '' });
+        fetchSessions();
+      } else {
+        console.error('Failed to create session');
+      }
     } catch (error) {
       console.error('Error creating session:', error);
+    }
+  };
+
+  const handleDeleteSession = async (id) => {
+    try {
+      const hexId = id.replace(/^ObjectID\("(.*)"\)$/, '$1');
+
+      console.log('Extracted id:', hexId);
+      const mutation = `
+        mutation DeleteGameSession($id: ID!) {
+          deleteGameSession(id: $id)
+        }
+      `;
+
+      const response = await axios.post(
+        'http://localhost:8080/graphql',
+        {
+          query: mutation,
+          variables: { id: hexId },
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        }
+      );
+
+      if (response.data.data.deleteGameSession) {
+        toast.success('Session deleted successfully');
+        fetchSessions();
+      } else {
+        toast.error('Failed to delete session');
+        console.error('Failed to delete session');
+      }
+    } catch (error) {
+      console.error('Error deleting session:', error);
     }
   };
 
@@ -101,43 +161,100 @@ export default function SessionView() {
           variant="contained"
           color="inherit"
           startIcon={<Iconify icon="eva:plus-fill" />}
-          onClick={handleAddSession}
+          onClick={() => setOpenDialog(true)}
         >
           New Session
         </Button>
       </Stack>
 
-      <Stack mb={5} direction="row" alignItems="center" justifyContent="space-between">
-        <PostSearch posts={posts} />
-        <PostSort
-          options={[
-            { value: 'latest', label: 'Latest' },
-            { value: 'popular', label: 'Popular' },
-            { value: 'oldest', label: 'Oldest' },
-          ]}
-        />
-      </Stack>
+      {/* List of sessions */}
       <List>
         {sessions.map((session) => (
-          <ListItem key={session.id} button>
+          <ListItem
+            key={session.id}
+            button
+            onClick={() => {
+              const hexId = session.id.replace(/^ObjectID\("(.*)"\)$/, '$1');
+              navigate(`/session/${hexId}`);
+            }}
+            sx={{ cursor: 'pointer' }}
+          >
             <ListItemText
               primary={session.name}
-              secondary={new Date(session.startTime).toLocaleString()}
+              secondary={session.status ? 'Opening' : 'Closed'}
             />
-            <ListItemSecondaryAction>
-              <IconButton edge="end" aria-label="edit">
-                <EditIcon />
+            <ListItemSecondaryAction sx={{ display: 'flex', alignItems: 'center' }}>
+              <IconButton
+                edge="end"
+                aria-label="delete"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDeleteSession(session.id);
+                }}
+              >
+                <DeleteIcon />
               </IconButton>
             </ListItemSecondaryAction>
           </ListItem>
         ))}
       </List>
 
-      {/* <Grid container spacing={3}>
-        {posts.map((post, index) => (
-          <PostCard key={post.id} post={post} index={index} />
-        ))}
-      </Grid> */}
+      {/* Dialog for adding new session */}
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+        <DialogTitle>Add New Session</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Session Name"
+            fullWidth
+            value={newSession.name}
+            onChange={(e) => setNewSession({ ...newSession, name: e.target.value })}
+          />
+          <TextField
+            margin="dense"
+            label="Start Time"
+            type="datetime-local"
+            fullWidth
+            InputLabelProps={{ shrink: true }}
+            value={newSession.startTime}
+            onChange={(e) => setNewSession({ ...newSession, startTime: e.target.value })}
+          />
+          {/* TextField for end time */}
+          <TextField
+            margin="dense"
+            label="End Time"
+            type="datetime-local"
+            fullWidth
+            InputLabelProps={{ shrink: true }}
+            value={newSession.endTime}
+            onChange={(e) => setNewSession({ ...newSession, endTime: e.target.value })}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
+          <Button onClick={handleAddSession}>Add</Button>
+        </DialogActions>
+      </Dialog>
+
+      <SessionDetail
+        session={selectedSession}
+        onClose={() => setSelectedSession(null)}
+        onUpdate={fetchSessions}
+      />
     </Container>
   );
 }
+
+SessionDetail.propTypes = {
+  session: PropTypes.shape({
+    id: PropTypes.string,
+    name: PropTypes.string,
+  }),
+  onClose: PropTypes.func.isRequired,
+  onUpdate: PropTypes.func.isRequired,
+};
+
+SessionDetail.defaultProps = {
+  session: null,
+};

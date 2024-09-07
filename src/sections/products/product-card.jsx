@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
 
-import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import EditIcon from '@mui/icons-material/Edit';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
+import Box from '@mui/material/Box';
 
 // ----------------------------------------------------------------------
 

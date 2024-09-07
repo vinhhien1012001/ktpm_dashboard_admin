@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 
-import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Radio from '@mui/material/Radio';
 import Button from '@mui/material/Button';
@@ -13,6 +12,7 @@ import RadioGroup from '@mui/material/RadioGroup';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import Box from '@mui/material/Box';
 
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';

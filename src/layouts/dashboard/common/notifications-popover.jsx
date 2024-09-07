@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { set, sub } from 'date-fns';
 import { faker } from '@faker-js/faker';
 
-import Box from '@mui/material/Box';
 import List from '@mui/material/List';
 import Badge from '@mui/material/Badge';
 import Button from '@mui/material/Button';
@@ -17,6 +16,7 @@ import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemButton from '@mui/material/ListItemButton';
+import Box from '@mui/material/Box';
 
 import { fToNow } from 'src/utils/format-time';
 
